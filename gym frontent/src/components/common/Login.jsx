@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [emailId, setEmailId] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleLogin = () => {
     // Logic for handling login
-    console.log("Username:", username);
+    console.log("Email:", emailId);
     console.log("Password:", password);
     console.log("Remember Me:", rememberMe);
   };
@@ -18,15 +18,15 @@ const Login = () => {
         <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
-              Username
+              Email 
             </label>
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="username"
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              id="email"
+              type="email"
+              placeholder="Enter your Email"
+              value={emailId}
+              onChange={(e) => setEmailId(e.target.value)}
             />
           </div>
           <div className="mb-6">
@@ -46,7 +46,7 @@ const Login = () => {
             <label className="flex items-center">
               <input
                 type="checkbox"
-                className="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
+                className="form-checkbox h-4 w-4 text-[#0ED3CF] transition duration-150 ease-in-out"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
               />
