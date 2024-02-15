@@ -57,7 +57,7 @@ io.on('connection', (socket) => {
     io.emit('chatMessage', {
       user: 'System',
       message: `${socket.id} has left the chat.`
-    });
+    }); 
   });
 });
 
