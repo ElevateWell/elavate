@@ -6,12 +6,6 @@ const cors = require('cors');
 const app = express();
 app.use(cors());
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
 
 const server = http.createServer(app);
 const io = socketIO(server, {
@@ -30,14 +24,14 @@ io.on('connection', (socket) => {
     io.emit('chatMessage', {
       user: 'System',
       message: `${data.username} has joined the chat.`
-    });
+     });
   });
 
-  socket.on('chatMessage', (data) => {
+  socket.on('chatMessage', (data) => {  
     io.emit('chatMessage', {
       user: socket.id,
       message: data.message
-    });
+    });     
   });
 
   socket.on('offer', (data) => {
