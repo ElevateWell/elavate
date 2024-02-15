@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 import { Transition } from '@headlessui/react';
 import 'tailwindcss/tailwind.css'; // Import Tailwind CSS styles
 
-const socket = io('https://chatapi-30nc.onrender.com');
+const socket = io('http://localhost:5000');
 
 function App() {
   const [messages, setMessages] = useState([]);
