@@ -1,12 +1,8 @@
 const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
-const cors = require('cors');
 
 const app = express();
-app.use(cors());
-
-
 const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
@@ -15,47 +11,48 @@ const io = socketIO(server, {
   }
 });
 
+
+
+// Serve the public folder (for client-side files)
+app.use(express.static('public'));
+
+// Handle socket.io connections
 io.on('connection', (socket) => {
+  console.log('A user connected');
 
-  console.log('User connected:', socket.id);
+  // Handle WebRTC signaling
+  socket.on('join-room', (roomId, userId) => {
+    socket.join(roomId);
+    socket.to(roomId).emit('user-connected', userId);  
+    console.log(`${roomId} joined user ${userId}`);
 
-  socket.on('join', (data) => {
-    console.log(`User ${socket.id} joined with username: ${data.username}`);
-    io.emit('chatMessage', {
-      user: 'System',
-      message: `${data.username} has joined the chat.`
-     });
+    socket.on('disconnect', () => {
+      socket.to(roomId).emit('user-disconnected', userId); 
+    });
+
+    // Forward WebRTC signaling messages
+    socket.on('offer', (offer, targetUserId) => {   
+      io.to(targetUserId).emit('offer', offer, userId);
+    });
+
+    socket.on('answer', (answer, targetUserId) => {
+      io.to(targetUserId).emit('answer', answer, userId);
+    });
+
+    socket.on('ice-candidate', (candidate, targetUserId) => {
+      io.to(targetUserId).emit('ice-candidate', candidate, userId);
+    });
+
+    socket.on('disconnect', () => {
+      io.to(roomId).emit('user-disconnected', userId);
+    });
   });
 
-  socket.on('chatMessage', (data) => {  
-    io.emit('chatMessage', {
-      user: socket.id,
-      message: data.message
-    });     
-  });
-
-  socket.on('offer', (data) => {
-    socket.broadcast.emit('offer', data);
-  });
-
-  socket.on('answer', (data) => {
-    socket.broadcast.emit('answer', data);
-  });
-
-  socket.on('ice-candidate', (data) => {
-    socket.broadcast.emit('ice-candidate', data);
-  });
-
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
-    io.emit('chatMessage', {
-      user: 'System',
-      message: `${socket.id} has left the chat.`
-    }); 
-  });
+  
 });
 
-const PORT = process.env.PORT || 5000;
+// Start the server
+const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
